@@ -205,6 +205,7 @@ public class AirLines extends javax.swing.JFrame {
         int end = dest.getSelectedIndex();
         
         Grafo.CustoUniforme(start, end);
+        jTextArea1.setText(Grafo.caminho);
         
     }
 
