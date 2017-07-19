@@ -5,12 +5,23 @@
  */
 package buscauniforme;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.Graphics;
+import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 /**
  *
@@ -18,15 +29,19 @@ import javax.swing.DefaultComboBoxModel;
  */
 public class AirLines extends javax.swing.JFrame {
 
+    
+    
+    
     BuscaUniforme Grafo;
 
-    public AirLines() {
+    public AirLines(){
         Grafo = new BuscaUniforme();
+
         initComponents();
         popularGrafo();
-        
         preenche(1);
         preenche(2);
+
     }
 
     /**
@@ -40,8 +55,6 @@ public class AirLines extends javax.swing.JFrame {
 
         dest = new javax.swing.JComboBox<>();
         orig = new javax.swing.JComboBox<>();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
         go = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -49,10 +62,6 @@ public class AirLines extends javax.swing.JFrame {
         dest.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         orig.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane1.setViewportView(jTextArea1);
 
         go.setText("GO");
         go.addActionListener(new java.awt.event.ActionListener() {
@@ -66,29 +75,27 @@ public class AirLines extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(41, 41, 41)
-                .addComponent(orig, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(77, 77, 77)
-                .addComponent(dest, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(81, 81, 81)
-                .addComponent(go, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(193, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1)
-                .addContainerGap())
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(28, 28, 28)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(dest, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(orig, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(73, 73, 73)
+                        .addComponent(go, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(122, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(45, 45, 45)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(orig, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(dest, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(go))
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 351, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGap(36, 36, 36)
+                .addComponent(orig, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(38, 38, 38)
+                .addComponent(dest, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(47, 47, 47)
+                .addComponent(go)
+                .addContainerGap(105, Short.MAX_VALUE))
         );
 
         pack();
@@ -96,6 +103,8 @@ public class AirLines extends javax.swing.JFrame {
 
     private void goActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_goActionPerformed
         caminhos();
+        
+        
     }//GEN-LAST:event_goActionPerformed
 
     /**
@@ -137,7 +146,8 @@ public class AirLines extends javax.swing.JFrame {
         DefaultComboBoxModel model = new DefaultComboBoxModel();
         // abertura do arquivo
         try {
-            BufferedReader myBuffer = new BufferedReader(new InputStreamReader(new FileInputStream("src\\Arquivos\\cidades.txt"), "ISO-8859-1"));
+            BufferedReader myBuffer = new BufferedReader(new InputStreamReader
+                (new FileInputStream("src\\Arquivos\\cidades.txt"), "ISO-8859-1"));
 
             // loop que lê e imprime todas as linhas do arquivo
             String cidade = myBuffer.readLine();
@@ -185,35 +195,37 @@ public class AirLines extends javax.swing.JFrame {
                 int start = Integer.parseInt(rota[0]);
                 int end = Integer.parseInt(rota[1]);
                 double value = Double.parseDouble(rota[2]);
-               
+
                 Grafo.addEdge(start, end, value);
-                
 
             }
-            
+
             br.close();
-            
 
         } catch (Exception e) {
 
         }
-        
+
     }
-    
-     private void caminhos(){
+
+    private void caminhos() {
         int start = orig.getSelectedIndex();
         int end = dest.getSelectedIndex();
-        
         Grafo.CustoUniforme(start, end);
-        jTextArea1.setText(Grafo.caminho);
-        
+
     }
+    
+     
+
+
+    
+    
+    
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> dest;
     private javax.swing.JButton go;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JComboBox<String> orig;
     // End of variables declaration//GEN-END:variables
 }
