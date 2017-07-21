@@ -2,56 +2,95 @@ package buscauniforme;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.util.*;
-import java.util.List;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.*;
 
 /**
- * Created by John Hed on 13/07/2017.
+ *
  */
-public class Main extends JPanel {
+public class Main {
 
-    private List<Point> pontos = new ArrayList<>(15);
-
+    private BuscaUniforme Grafo = new BuscaUniforme();
     private JFrame janela;
     private JPanel painel;
     private JLabel mapa;
-    
-    private static class Line {
+    private JComboBox<String> orig;
+    private JComboBox<String> dest;
+    private JButton btnBuscar;
+    private JButton btnNovo;
+    private Grid gridPontos = new Grid();
 
-        final int x1;
-        final int y1;
-        final int x2;
-        final int y2;
-        final Color color;
 
-        public Line(int x1, int y1, int x2, int y2, Color color) {
-            this.x1 = x1;
-            this.y1 = y1;
-            this.x2 = x2;
-            this.y2 = y2;
-            this.color = color;
+
+    private void preenche(int i) {
+        DefaultComboBoxModel model = new DefaultComboBoxModel();
+        // abertura do arquivo
+        try {
+            BufferedReader myBuffer = new BufferedReader(new InputStreamReader
+                    (new FileInputStream("src\\Arquivos\\cidades.txt"), "ISO-8859-1"));
+
+            // loop que lê e imprime todas as linhas do arquivo
+            String cidade = myBuffer.readLine();
+
+            while (cidade != null) {
+                model.addElement(cidade);
+                cidade = myBuffer.readLine();
+            }
+
+            myBuffer.close();
+            switch (i) {
+                case 1:
+                    orig.setModel(model);
+                    break;
+                case 2:
+                    dest.setModel(model);
+                    break;
+                default:
+                    break;
+            }
+        } catch (Exception e) {
+
         }
+
     }
 
-    private final LinkedList<Line> linhas = new LinkedList<Line>();
+    private void popularGrafo() {
+        try {
+            File f = new File("src\\Arquivos\\rotas.txt");
+            BufferedReader brc = new BufferedReader(
+                    new InputStreamReader(
+                            new FileInputStream("src\\Arquivos\\cidades.txt"), "ISO-8859-1"));
+            String cid = brc.readLine();
 
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        for (Point fillCell : pontos) {
-            int cellX = (fillCell.x);
-            int cellY = (fillCell.y);
-            g.setColor(Color.RED);
-            g.fillRoundRect(cellX, cellY, 10, 10, 10, 10);
+            while (cid != null) {
+                Grafo.addVertex(cid);
+                cid = brc.readLine();
+            }
+            brc.close();
+
+            FileReader fr = new FileReader(f);
+            BufferedReader br = new BufferedReader(fr);
+            String linha;
+            while ((linha = br.readLine()) != null) {
+                String rota[] = new String[3];
+                rota = linha.split(";");
+                int start = Integer.parseInt(rota[0]);
+                int end = Integer.parseInt(rota[1]);
+                double value = Double.parseDouble(rota[2]);
+
+                Grafo.addEdge(start, end, value);
+
+            }
+
+            br.close();
+
+        } catch (Exception e) {
+
         }
-        for (Line linha : linhas) {
-            g.setColor(Color.RED);
-            g.drawLine(linha.x1 + 5, linha.y1 + 5, linha.x2 + 5, linha.y2 + 5);
-        }
+
     }
+
 
     private void preparaJanela() {
         janela = new JFrame("Rotas de Aviões");
@@ -61,13 +100,12 @@ public class Main extends JPanel {
         janela.setSize(900, 720);
         janela.setLocationRelativeTo(null);
         janela.setVisible(true);
-
-        
+        janela.setBackground(Color.GRAY);
         painelMapa();
-        adcionaRotas();
-        
-
-
+    }
+    
+    public void init(){
+        preparaJanela();
     }
 
     // outros metodos prepara...
@@ -76,59 +114,64 @@ public class Main extends JPanel {
         ImageIcon img = new ImageIcon("src//Imagem//mapa.png");
         mapa = new JLabel(img);
         mapa.setLayout(new FlowLayout());
+        JPanel menu = new JPanel();
+        btnBuscar = new JButton("Buscar");
+        btnNovo = new JButton("Nova Busca");
+        btnNovo.setEnabled(false);
+        orig = new JComboBox<String>();
+        dest = new JComboBox<String>();
+        popularGrafo();
+        preenche(1);
+        preenche(2);
+        menu.setSize(300, 300);
+        menu.setVisible(true);
+        menu.setBackground(Color.GRAY);
+        menu.add(orig);
+        menu.add(dest);
+        menu.add(btnBuscar);
+        menu.add(btnNovo);
+        painel.setBackground(Color.GRAY);
         painel.add(mapa, BorderLayout.NORTH);
         janela.add(painel, BorderLayout.CENTER);
+        janela.add(menu, BorderLayout.NORTH);
         janela.pack();
         janela.setVisible(true);
+        btnBuscar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                int start = orig.getSelectedIndex();
+                int end = dest.getSelectedIndex();
+                Grafo.CustoUniforme(start, end);
+                if(!Grafo.caminhoFinal.equalsIgnoreCase("")){
+                JOptionPane.showMessageDialog(null, " " + Grafo.caminhoFinal);
+                }
+
+                gridPontos.init();
+                mapa.add(gridPontos, BorderLayout.CENTER);
+                mapa.setVisible(true);
+                mapa.paint(gridPontos.getGraphics());
+                btnNovo.setEnabled(true);
+                btnBuscar.setEnabled(false);
+                orig.setEnabled(false);
+                dest.setEnabled(false);
+
+            }
+        });
+        btnNovo.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                janela.dispose();
+                Main n = new Main();
+                n.preparaJanela();
+            }
+        });
     }
 
-    private void adcionaRotas() {
-        Main grid = new Main();
-        grid.setSize(900, 720);
-        grid.setBackground(new Color(0, 0, 0, 0));
-        painel.add(grid);
-        leitura();
-        for (Point ponto : pontos) {
-            grid.MarcaPonto(ponto.x, ponto.y);
-        }
-
-    }
-
-    public void MarcaPonto(int x, int y) {
-        pontos.add(new Point(x, y));
-        repaint();
-    }
-
-    public void MarcaLinha(int x1, int y1, int x2, int y2) {
-        linhas.add(new Line(x1, y1, x2, y2, Color.red));
-        repaint();
-    }
 
     public static void main(String args[]) {
         Main n = new Main();
-        n.preparaJanela();
-    }
-
-    public void leitura() {
-        try {
-            BufferedReader myBuffer = new BufferedReader(new InputStreamReader
-                (new FileInputStream("src//Arquivos//resultado.txt")));
-
-            // loop que lê e imprime todas as linhas do arquivo
-            String pt = myBuffer.readLine();
-            while (pt != null) {
-                if (pt != null) {
-                    String[] valores = pt.split(";");
-                    this.pontos.add(new Point(Integer.parseInt(valores[0]), Integer.parseInt(valores[1])));
-                }
-                pt = myBuffer.readLine();
-
-            }
-
-            myBuffer.close();
-        } catch (Exception e) {
-            System.out.println("Erro");
-        }
+        n.init();
 
     }
 
