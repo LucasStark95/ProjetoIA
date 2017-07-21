@@ -1,15 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package buscauniforme;
 
-/**
- *
- * @author Lucas
- */
-public class caminho implements Comparable<caminho>  {
+public class caminho implements Comparable<caminho> {
+
     private int vertice;
     private double valor;
 
@@ -20,8 +12,6 @@ public class caminho implements Comparable<caminho>  {
 
     public caminho() {
     }
-    
-    
 
     public int getVertice() {
         return vertice;
@@ -49,6 +39,5 @@ public class caminho implements Comparable<caminho>  {
         }
         return 0;
     }
-    
-    
+
 }
