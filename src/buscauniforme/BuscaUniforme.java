@@ -120,16 +120,18 @@ public class BuscaUniforme {
 
     private void retrocesso(int vertice, int chegada) {
 
+        int i = 0;
         Point[] p = new Point[20];
         ArrayList<Vertex> List = new ArrayList<>();
         List.add(vertexList[vertice]);
 
         int valor = vertexList[vertice].dad;
-        p[vertice] = pontos.get(vertice);
-        p[chegada] = pontos.get(chegada);
+        p[i++] = pontos.get(chegada);
+        p[i++] = pontos.get(vertice);
+        
         while (valor != -1) {
             List.add(vertexList[valor]);
-            p[valor] = pontos.get(valor);
+            p[i++] = pontos.get(valor);
             valor = vertexList[valor].dad;
         }
 
