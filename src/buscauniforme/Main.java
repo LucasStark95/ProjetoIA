@@ -27,8 +27,7 @@ public class Main {
         DefaultComboBoxModel model = new DefaultComboBoxModel();
         // abertura do arquivo
         try {
-            BufferedReader myBuffer = new BufferedReader(new InputStreamReader
-                    (new FileInputStream("src\\Arquivos\\cidades.txt"), "ISO-8859-1"));
+            BufferedReader myBuffer = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/Arquivos/cidades.txt"),"ISO-8859-1"));
 
             // loop que lê e imprime todas as linhas do arquivo
             String cidade = myBuffer.readLine();
@@ -57,20 +56,24 @@ public class Main {
 
     private void popularGrafo() {
         try {
-            File f = new File("src\\Arquivos\\rotas.txt");
+          
             BufferedReader brc = new BufferedReader(
                     new InputStreamReader(
-                            new FileInputStream("src\\Arquivos\\cidades.txt"), "ISO-8859-1"));
+                            getClass().getResourceAsStream("/Arquivos/cidades.txt"),"ISO-8859-1"));
+                            
             String cid = brc.readLine();
-
+            
             while (cid != null) {
                 Grafo.addVertex(cid);
                 cid = brc.readLine();
+                
             }
+            
             brc.close();
 
-            FileReader fr = new FileReader(f);
-            BufferedReader br = new BufferedReader(fr);
+            
+            BufferedReader br = new BufferedReader(new InputStreamReader(
+                    getClass().getResourceAsStream("/Arquivos/rotas.txt")));
             String linha;
             while ((linha = br.readLine()) != null) {
                 String rota[] = new String[3];
@@ -79,10 +82,11 @@ public class Main {
                 int end = Integer.parseInt(rota[1]);
                 double value = Double.parseDouble(rota[2]);
 
+                
                 Grafo.addEdge(start, end, value);
-
+                
             }
-
+            
             br.close();
 
         } catch (Exception e) {
@@ -111,7 +115,7 @@ public class Main {
     // outros metodos prepara...
     private void painelMapa() {
         painel = new JPanel();
-        ImageIcon img = new ImageIcon("src//Imagem//mapa.png");
+        ImageIcon img = new ImageIcon(getClass().getResource("/Imagem/mapa.png"));
         mapa = new JLabel(img);
         mapa.setLayout(new FlowLayout());
         JPanel menu = new JPanel();

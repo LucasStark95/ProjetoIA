@@ -72,8 +72,8 @@ public class Grid extends JPanel {
 
     public void leituraResultado() {
         try {
-            BufferedReader myBuffer = new BufferedReader(new InputStreamReader
-                    (new FileInputStream("src\\Arquivos\\resultado.txt")));
+            
+            BufferedReader myBuffer = new BufferedReader(new InputStreamReader(new FileInputStream("resultado.txt")));
 
             // loop que lê e imprime todas as linhas do arquivo
             String pt = myBuffer.readLine();
@@ -88,7 +88,7 @@ public class Grid extends JPanel {
 
             myBuffer.close();
         } catch (Exception e) {
-            System.out.println("Erro");
+            JOptionPane.showMessageDialog(this, "não encontrou");
         }
 
     }
